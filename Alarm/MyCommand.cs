@@ -31,8 +31,8 @@ namespace Alarm
                 private bool work;
                 private Regex regex;
 
-                [Name("--time", "-t"), Required]
-                private readonly Parameter<string> time;
+                [NoName]
+                private readonly Parameter<string[]> time;
 
                 public timeCommand(TimerForm form, bool work)
                 {
@@ -41,12 +41,13 @@ namespace Alarm
                     string h = "(?<hour>[0-9]{1,2})", m = "(?<minute>[0-9]{1,2})", s = "(?<second>[0-9]{1,2})";
                     this.regex = new Regex(string.Format("({0}:)?{1}:{2}|{1}", h, m, s));
 
-                    time.Validate(x => regex.IsMatch(x), "Invalid time format");
+                    time.Validate(x => x.Length == 1, "Exactly one time only please");
+                    time.ValidateEach(x => regex.IsMatch(x), "Invalid time format");
                 }
 
                 protected override void Execute()
                 {
-                    var match = regex.Match(time.Value);
+                    var match = regex.Match(time.Value[0]);
 
                     var h = match.Groups["hour"].Value; if (h.Length == 0) h = "0";
                     var m = match.Groups["minute"].Value; if (m.Length == 0) m = "0";
