@@ -40,9 +40,9 @@ namespace Alarm
             icon_Tick(null, null);
             prettierLabel1.Text2 = "";
             if (icon.Work)
-                this.textBox1.Text = "break -t 5";
+                this.textBox1.Text = "break 5";
             else
-                this.textBox1.Text = "work -t 25";
+                this.textBox1.Text = "work 25";
 
             this.textBox1.Focus();
 
