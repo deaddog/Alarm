@@ -1,4 +1,5 @@
-﻿using DeadDog.Audio.Playback;
+﻿using CommandLineParsing;
+using DeadDog.Audio.Playback;
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -106,7 +107,7 @@ namespace Alarm
 
             var message = new MyCommand(this).ParseAndExecute(text);
             if (message.IsError)
-                prettierLabel1.Text2 = message.GetMessage();
+                prettierLabel1.Text2 = ColorConsole.ClearColors(message.GetMessage());
             else if (text != "quit")
             {
                 prettierLabel1.Text2 = "";
