@@ -38,6 +38,9 @@ namespace Alarm
             timer.Start();
         }
 
+        public void Pause()
+        { timer.Enabled = !timer.Enabled; }
+
         private TimeSpan remaining;
         public TimeSpan Remaining
         {

@@ -23,6 +23,7 @@ namespace Alarm
                 });
                 SubCommands.Add("work", new timeCommand(form, true));
                 SubCommands.Add("break", new timeCommand(form, false));
+                SubCommands.Add("pause", form.icon.Pause); 
             }
 
             private class timeCommand : Command
