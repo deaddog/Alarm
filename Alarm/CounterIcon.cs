@@ -39,7 +39,11 @@ namespace Alarm
         }
 
         public void Pause()
-        { timer.Enabled = !timer.Enabled; }
+        {
+            timer.Enabled = !timer.Enabled;
+            if (!timer.Enabled) timespan = remaining;
+            else start = DateTime.Now;
+        }
 
         private TimeSpan remaining;
         public TimeSpan Remaining
