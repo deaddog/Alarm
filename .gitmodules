@@ -4,3 +4,6 @@
 [submodule "DeadDog.Audio"]
 	path = DeadDog.Audio
 	url = https://github.com/deaddog/DeadDog.Audio.git
+[submodule "Stufkan"]
+	path = Stufkan
+	url = https://github.com/stufkan/Stufkan.git
