@@ -4,6 +4,10 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
+using Stufkan.Forms;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Alarm
 {
@@ -13,6 +17,8 @@ namespace Alarm
         private bool canclose = false;
         private CounterIcon icon;
         private AudioControl<string> player;
+
+        List<GlobalHotkey> hotkeys;
 
         public TimerForm()
         {
@@ -25,6 +31,10 @@ namespace Alarm
             this.icon.Elapsed += icon_Elapsed;
 
             this.player = new AudioControl<string>(x => x);
+
+            this.Load+=TimerForm_Load;
+            hotkeys = new List<GlobalHotkey>();
+            hotkeys.Add(new GlobalHotkey("Next", Constants.ALT + Constants.CTRL, Keys.A, this));
 
             this.Disposed += (s, e) => { icon.Dispose(); player.Dispose(); };
         }
@@ -131,6 +141,46 @@ namespace Alarm
                 this.Top = Screen.PrimaryScreen.WorkingArea.Bottom - this.Height - MARGIN;
 
             if (this.Top < MARGIN) this.Top = MARGIN;
+        }
+
+        //global hotkey
+        public const int WM_HOTKEY_MSG_ID = 786;
+        protected override void WndProc(ref System.Windows.Forms.Message m)
+        {
+
+            if (m.Msg == Constants.WM_HOTKEY_MSG_ID)
+
+                switch (GetKey(m.LParam))
+                {
+                    case Keys.A:
+                        showForm();
+                        break;
+                }
+
+            base.WndProc(ref m);
+
+        }
+
+        private void TimerForm_Load(object sender, EventArgs e)
+        {
+            foreach (var hk in hotkeys)
+            {
+                if (hk.Register())
+                    Debug.WriteLine(hk.Name + " successfully registered");
+                else
+                    Debug.WriteLine("Error registering hotkey \"" + hk.Name + "\"");
+            }
+        }
+
+        private void showForm()
+        {
+            this.Visible = true;
+            ensureInsideScreen(Cursor.Position);
+        }
+
+        private Keys GetKey(IntPtr LParam)
+        {
+            return (Keys)((LParam.ToInt32()) >> 16); // not all of the parenthesis are needed, I just found it easier to see what's happening
         }
     }
 }
