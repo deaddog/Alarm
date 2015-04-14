@@ -48,8 +48,7 @@ namespace Alarm
 
             this.textBox1.Focus();
 
-            this.Left = Cursor.Position.X - this.Width / 2;
-            this.Top = Cursor.Position.Y - this.Height / 2;
+            ensureInsideScreen(Cursor.Position);
         }
 
         protected override void OnLostFocus(EventArgs e)
@@ -84,10 +83,7 @@ namespace Alarm
 
                 this.textBox1.Focus();
 
-                this.Left = Cursor.Position.X - this.Width / 2;
-                if (this.Left + this.Width > Screen.PrimaryScreen.WorkingArea.Width)
-                    this.Left = Screen.PrimaryScreen.WorkingArea.Right - this.Width - MARGIN;
-                this.Top = Screen.PrimaryScreen.WorkingArea.Bottom - this.Height - MARGIN;
+                ensureInsideScreen(Cursor.Position);
             }
         }
 
@@ -118,6 +114,23 @@ namespace Alarm
 
             e.Handled = true;
             e.SuppressKeyPress = true;
+        }
+
+        private void ensureInsideScreen(Point cursorPosition)
+        {
+            this.Left = cursorPosition.X - this.Width / 2;
+            if (this.Left + this.Width > Screen.PrimaryScreen.WorkingArea.Width)
+                this.Left = Screen.PrimaryScreen.WorkingArea.Right - this.Width - MARGIN;
+
+            if (this.Left < MARGIN) this.Left = MARGIN;
+
+
+            this.Top = cursorPosition.Y - this.Height / 2;
+
+            if (this.Top > Screen.PrimaryScreen.WorkingArea.Bottom - this.Height - MARGIN)
+                this.Top = Screen.PrimaryScreen.WorkingArea.Bottom - this.Height - MARGIN;
+
+            if (this.Top < MARGIN) this.Top = MARGIN;
         }
     }
 }
