@@ -148,6 +148,7 @@ namespace Alarm
                 Count = (int)remaining.TotalSeconds;
             else
             {
+                remaining = new TimeSpan(0);
                 Count = 0;
                 timer.Stop();
             }

@@ -9,6 +9,7 @@ namespace Alarm
 {
     public partial class TimerForm : Form
     {
+        private const int MARGIN = 5;
         private bool canclose = false;
         private CounterIcon icon;
         private AudioControl<string> player;
@@ -85,8 +86,8 @@ namespace Alarm
 
                 this.Left = Cursor.Position.X - this.Width / 2;
                 if (this.Left + this.Width > Screen.PrimaryScreen.WorkingArea.Width)
-                    this.Left = Screen.PrimaryScreen.WorkingArea.Right - this.Width - 5;
-                this.Top = Screen.PrimaryScreen.WorkingArea.Bottom - this.Height - 5;
+                    this.Left = Screen.PrimaryScreen.WorkingArea.Right - this.Width - MARGIN;
+                this.Top = Screen.PrimaryScreen.WorkingArea.Bottom - this.Height - MARGIN;
             }
         }
 
