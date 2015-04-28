@@ -9,6 +9,10 @@ namespace Alarm
     {
         private class MyCommand : Command
         {
+            public const string WORK_COMMAND = "work";
+            public const string BREAK_COMMAND = "break";
+            public const string PAUSE_COMMAND = "pause";
+
             private TimerForm form;
 
             public MyCommand(TimerForm form)
@@ -21,9 +25,9 @@ namespace Alarm
                     form.Close();
                     Application.Exit();
                 });
-                SubCommands.Add("work", new timeCommand(form, true));
-                SubCommands.Add("break", new timeCommand(form, false));
-                SubCommands.Add("pause", form.icon.Pause); 
+                SubCommands.Add(WORK_COMMAND, new timeCommand(form, true));
+                SubCommands.Add(BREAK_COMMAND, new timeCommand(form, false));
+                SubCommands.Add(PAUSE_COMMAND, form.icon.Pause); 
             }
 
             private class timeCommand : Command
