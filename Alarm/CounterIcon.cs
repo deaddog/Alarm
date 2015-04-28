@@ -15,6 +15,9 @@ namespace Alarm
         private NotifyIcon icon;
         private int count;
         private bool work;
+        private readonly Color initialColor;
+        private Color color;
+        private Bitmap[] numbers = new Bitmap[10];
 
         public CounterIcon(NotifyIcon icon)
         {
@@ -25,6 +28,7 @@ namespace Alarm
             this.Count = 0;
             this.work = true;
             this.Work = false;
+            this.color = this.initialColor = Properties.Resources._0.GetPixel(2, 2);
         }
 
         public void Start(TimeSpan time, bool work)
@@ -81,11 +85,29 @@ namespace Alarm
                 }
             }
         }
+        public Color Color
+        {
+            get { return color; }
+            set
+            {
+                if (color == value)
+                    return;
+
+                color = value;
+
+                var temp = numbers;
+                numbers = new Bitmap[10];
+                for (int i = 0; i < temp.Length; i++)
+                    if (temp[i] != null) temp[i].Dispose();
+
+                setIcon(icon, count, work);
+            }
+        }
 
         [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = CharSet.Auto)]
         extern static bool DestroyIcon(IntPtr handle);
 
-        private static void setIcon(NotifyIcon notifyIcon, int count, bool work)
+        private void setIcon(NotifyIcon notifyIcon, int count, bool work)
         {
             Icon icon;
             using (Bitmap myBitmap = new Bitmap(16, 16, System.Drawing.Imaging.PixelFormat.Format32bppPArgb))
@@ -115,7 +137,40 @@ namespace Alarm
 
             DestroyIcon(icon.Handle);
         }
-        private static Bitmap getImage(int c)
+        private unsafe Bitmap getImage(int c)
+        {
+            if (color == initialColor)
+                return getBaseImage(c);
+
+            else if (c >= numbers.Length)
+                return null;
+
+            else if (numbers[c] == null)
+            {
+                var bmp = getBaseImage(c);
+                var rect = new Rectangle(Point.Empty, bmp.Size);
+
+                bmp = bmp.Clone(rect, bmp.PixelFormat);
+                var bmd = bmp.LockBits(new Rectangle(Point.Empty, bmp.Size), System.Drawing.Imaging.ImageLockMode.ReadWrite, bmp.PixelFormat);
+
+                byte* p = (byte*)bmd.Scan0;
+                for (int y = 0; y < bmp.Height; y++, p = (byte*)bmd.Scan0 + bmd.Stride * y)
+                    for (int x = 0; x < bmp.Width; x++, p += 4)
+                    {
+                        if(p[0] == initialColor.R && p[1] == initialColor.G && p[2] == initialColor.B)
+                        {
+                            p[0] = color.B;
+                            p[1] = color.G;
+                            p[2] = color.R;
+                        }
+                    }
+                bmp.UnlockBits(bmd);
+                numbers[c] = bmp;
+            }
+
+            return numbers[c];
+        }
+        private static Bitmap getBaseImage(int c)
         {
             switch (c)
             {
