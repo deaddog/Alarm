@@ -52,9 +52,9 @@ namespace Alarm
             icon_Tick(null, null);
             prettierLabel1.Text2 = "";
             if (icon.Work)
-                this.textBox1.Text = "break 5";
+                this.textBox1.Text = MyCommand.BREAK_COMMAND + " 5";
             else
-                this.textBox1.Text = "work 25";
+                this.textBox1.Text = MyCommand.WORK_COMMAND + " 25";
 
             this.textBox1.Focus();
 
@@ -115,9 +115,11 @@ namespace Alarm
             var message = new MyCommand(this).ParseAndExecute(text);
             if (message.IsError)
                 prettierLabel1.Text2 = ColorConsole.ClearColors(message.GetMessage());
-            else if (text != "quit")
+            else
+              prettierLabel1.Text2 = "";
+
+            if (text == MyCommand.BREAK_COMMAND || text == MyCommand.WORK_COMMAND)
             {
-                prettierLabel1.Text2 = "";
                 player.Open("start.mp3");
                 player.Play();
             }
