@@ -141,17 +141,15 @@ namespace Alarm
 
             remaining = timespan - diff;
 
+            if (remaining.TotalSeconds < 0)
+                remaining = new TimeSpan(-remaining.Ticks);
+
             if (remaining.TotalSeconds >= 61)
                 Count = (int)Math.Round(remaining.TotalMinutes);
 
-            else if (remaining.TotalSeconds > 0)
-                Count = (int)remaining.TotalSeconds;
             else
-            {
-                remaining = new TimeSpan(0);
-                Count = 0;
-                timer.Stop();
-            }
+                Count = (int)remaining.TotalSeconds;
+
 
             if (Tick != null)
                 Tick(this, EventArgs.Empty);
