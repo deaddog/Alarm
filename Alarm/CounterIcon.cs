@@ -93,10 +93,14 @@ namespace Alarm
                 if (color == value)
                     return;
 
+                color = value;
+
                 var temp = numbers;
                 numbers = new Bitmap[10];
                 for (int i = 0; i < temp.Length; i++)
                     if (temp[i] != null) temp[i].Dispose();
+
+                setIcon(icon, count, work);
             }
         }
 
@@ -133,7 +137,7 @@ namespace Alarm
 
             DestroyIcon(icon.Handle);
         }
-        private Bitmap getImage(int c)
+        private unsafe Bitmap getImage(int c)
         {
             if (color == initialColor)
                 return getBaseImage(c);
@@ -143,7 +147,25 @@ namespace Alarm
 
             else if (numbers[c] == null)
             {
+                var bmp = getBaseImage(c);
+                var rect = new Rectangle(Point.Empty, bmp.Size);
 
+                bmp = bmp.Clone(rect, bmp.PixelFormat);
+                var bmd = bmp.LockBits(new Rectangle(Point.Empty, bmp.Size), System.Drawing.Imaging.ImageLockMode.ReadWrite, bmp.PixelFormat);
+
+                byte* p = (byte*)bmd.Scan0;
+                for (int y = 0; y < bmp.Height; y++, p = (byte*)bmd.Scan0 + bmd.Stride * y)
+                    for (int x = 0; x < bmp.Width; x++, p += 4)
+                    {
+                        if(p[0] == initialColor.R && p[1] == initialColor.G && p[2] == initialColor.B)
+                        {
+                            p[0] = color.B;
+                            p[1] = color.G;
+                            p[2] = color.R;
+                        }
+                    }
+                bmp.UnlockBits(bmd);
+                numbers[c] = bmp;
             }
 
             return numbers[c];
