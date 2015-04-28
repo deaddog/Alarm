@@ -155,7 +155,7 @@ namespace Alarm
                 switch (GetKey(m.LParam))
                 {
                     case Keys.A:
-                        showForm();
+                        notifyIcon1_MouseClick(null, new MouseEventArgs(System.Windows.Forms.MouseButtons.Left, 0, 0, 0, 0));
                         break;
                 }
 
