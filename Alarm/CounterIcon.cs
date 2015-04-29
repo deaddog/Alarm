@@ -39,6 +39,7 @@ namespace Alarm
             this.timespan = time;
             start = DateTime.Now;
             this.Work = work;
+            Color = initialColor;
             timer.Start();
         }
 
@@ -198,6 +199,8 @@ namespace Alarm
             remaining = timespan - diff;
 
             bool elapsed = oldRemaining.Ticks > 0 && remaining.Ticks <= 0;
+            if (elapsed)
+                Color = Color.FromArgb(225,95,16);
 
             System.Diagnostics.Debug.WriteLine(remaining.Ticks + " " + oldRemaining.Ticks);
 
