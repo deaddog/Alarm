@@ -157,7 +157,7 @@ namespace Alarm
                 for (int y = 0; y < bmp.Height; y++, p = (byte*)bmd.Scan0 + bmd.Stride * y)
                     for (int x = 0; x < bmp.Width; x++, p += 4)
                     {
-                        if(p[0] == initialColor.R && p[1] == initialColor.G && p[2] == initialColor.B)
+                        if (p[0] == initialColor.R && p[1] == initialColor.G && p[2] == initialColor.B)
                         {
                             p[0] = color.B;
                             p[1] = color.G;
@@ -194,22 +194,25 @@ namespace Alarm
         {
             var diff = DateTime.Now - start;
 
+            TimeSpan oldRemaining = remaining;
             remaining = timespan - diff;
 
-            if (remaining.TotalSeconds < 0)
-                remaining = new TimeSpan(-remaining.Ticks);
+            bool elapsed = oldRemaining.Ticks > 0 && remaining.Ticks <= 0;
 
-            if (remaining.TotalSeconds >= 61)
-                Count = (int)Math.Round(remaining.TotalMinutes);
+            System.Diagnostics.Debug.WriteLine(remaining.Ticks + " " + oldRemaining.Ticks);
+
+            TimeSpan temp = remaining.TotalSeconds < 0 ? -remaining : remaining;
+
+            if (temp.TotalSeconds >= 61)
+                Count = (int)Math.Round(temp.TotalMinutes);
 
             else
-                Count = (int)remaining.TotalSeconds;
-
+                Count = (int)temp.TotalSeconds;
 
             if (Tick != null)
                 Tick(this, EventArgs.Empty);
 
-            if (!timer.Enabled && Elapsed != null)
+            if (elapsed && Elapsed != null)
                 Elapsed(this, EventArgs.Empty);
         }
 
