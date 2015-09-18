@@ -92,6 +92,7 @@ namespace Alarm
                 this.textBox1.Text = "";
 
                 this.textBox1.Focus();
+                this.Activate();
 
                 ensureInsideScreen(Cursor.Position);
             }
